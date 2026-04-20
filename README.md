@@ -114,6 +114,11 @@ Example minimal SpecPack (what `figural-watch init` generates):
 
 #### `figural-watch init`
 - Creates `./specpack.json` from a minimal v1 template.
+- Use `--interactive` to answer a few prompts:
+
+```bash
+npx -y figural-watch init --interactive
+```
 
 #### `figural-watch validate`
 - Validates `./specpack.json` against the v1 JSON Schema.
@@ -125,6 +130,21 @@ Example minimal SpecPack (what `figural-watch init` generates):
 - Flags conflicts vs `scope_out`
 - Writes `figural-watch-report.md`
 - Exits **2** if “fail” conflicts exist, otherwise **0**
+
+#### `figural-watch doctor`
+- Checks that git is available, you’re in a repo, and `specpack.json` exists + validates.
+- Optionally verifies `--base` / `--head` refs exist (helpful for CI and `origin/main` issues).
+
+```bash
+npx -y figural-watch doctor --base origin/main --head HEAD
+```
+
+#### `figural-watch explain --base <ref> --head <ref>`
+- Explains *why* a conflict was flagged, including evidence (matched `scope_out` line, deps, etc.).
+
+```bash
+npx -y figural-watch explain --base origin/main --head HEAD
+```
 
 ### GitHub Actions (scaffold)
 

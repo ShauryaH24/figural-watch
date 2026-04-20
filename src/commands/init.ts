@@ -6,7 +6,8 @@ export function initCommand() {
   return new Command("init")
     .description("Create a minimal SpecPack v1 at ./specpack.json")
     .option("--force", "overwrite existing specpack.json")
-    .action(async (opts: { force?: boolean }) => {
+    .option("--interactive", "ask a few questions (decision, scope_out picks, confidence)")
+    .action(async (opts: { force?: boolean; interactive?: boolean }) => {
       const targetPath = path.resolve(process.cwd(), "specpack.json");
       const exists = fs.existsSync(targetPath);
 
@@ -19,13 +20,50 @@ export function initCommand() {
         return;
       }
 
+      let decision = "Describe the single core decision this change set enforces.";
+      let confidence = 0.7;
+      let scope_out: string[] = ["What is explicitly out of scope / forbidden"];
+
+      if (opts.interactive) {
+        const { input, checkbox } = await import("@inquirer/prompts");
+
+        decision = await input({
+          message: "Decision (one sentence)",
+          default: decision,
+          validate: (v) => (v && v.trim().length > 0 ? true : "Decision is required."),
+        });
+
+        const picks = await checkbox({
+          message: "Scope-out quick picks (optional)",
+          choices: [
+            { name: "No ORM (database ORM additions)", value: "no orm" },
+            { name: "No Auth (authentication system additions)", value: "no auth" },
+            { name: "No SSR/Next.js", value: "no ssr" },
+          ],
+        });
+
+        const confStr = await input({
+          message: "Confidence (0..1)",
+          default: String(confidence),
+          validate: (v) => {
+            const n = Number(v);
+            if (Number.isNaN(n)) return "Enter a number (0..1).";
+            if (n < 0 || n > 1) return "Confidence must be between 0 and 1.";
+            return true;
+          },
+        });
+        confidence = Number(confStr);
+
+        scope_out = picks.length > 0 ? picks : scope_out;
+      }
+
       const template = {
         specpack_version: 1,
-        decision: "Describe the single core decision this change set enforces.",
+        decision,
         rationale: "Why this decision is the right trade-off.",
-        confidence: 0.7,
+        confidence,
         scope_in: ["What is explicitly in scope"],
-        scope_out: ["What is explicitly out of scope / forbidden"],
+        scope_out,
         edge_cases: [],
         tests: [],
         success: [],
