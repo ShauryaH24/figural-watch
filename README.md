@@ -18,6 +18,62 @@ This writes:
 - `specpack.json` (your source-of-truth contract)
 - `figural-watch-report.md` (the diff vs contract report)
 
+### How a user sets this up in their repo
+
+There are two ways to use `figural-watch`:
+
+#### Option A: Run locally (manual)
+
+1) From the repo root, create a `specpack.json`:
+
+```bash
+npx -y figural-watch init
+```
+
+2) Edit `specpack.json` to match your decision + constraints.
+
+3) Validate any time (no git required):
+
+```bash
+npx -y figural-watch validate
+```
+
+4) Generate a report for a PR branch (uses git refs):
+
+```bash
+npx -y figural-watch report --base origin/main --head HEAD
+```
+
+Notes:
+- `validate` checks **local files only** (it does not require commits).
+- `report` compares `base..head`, so make sure the base ref exists locally (often `git fetch origin`).
+
+#### Option B: Run on GitHub PRs (automatic)
+
+Add a workflow file to your repo at **`.github/workflows/figural-watch.yml`**, then commit + push it.
+
+If your default branch is `main`, use:
+
+```yaml
+name: figural-watch
+on:
+  pull_request:
+jobs:
+  specpack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npx -y figural-watch validate
+      - run: npx -y figural-watch report --base origin/main --head HEAD
+```
+
+If your default branch is `master`, change `origin/main` → `origin/master`.
+
 ### Philosophy (why this exists)
 
 - **Multi-agent drift is real**: multiple AI sessions can slowly “bend” a repo in different directions.
