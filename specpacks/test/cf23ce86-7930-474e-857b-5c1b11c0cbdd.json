@@ -1,0 +1,134 @@
+{
+  "tests": [
+    {
+      "then": "Export button shows lock icon and premium badge clearly visible",
+      "when": "They look at the export button",
+      "given": "A free plan user views the meal logging interface"
+    },
+    {
+      "then": "Tooltip displays 'Export requires premium plan - upgrade to export your data'",
+      "when": "Tooltip appears",
+      "given": "A free plan user hovers over export button on desktop"
+    },
+    {
+      "then": "Lock icon and premium indicator are visible without requiring hover",
+      "when": "They look at the interface",
+      "given": "A mobile free plan user views export options"
+    },
+    {
+      "then": "Upgrade modal appears with pricing and feature explanation, not a blocking paywall",
+      "when": "They attempt export",
+      "given": "A free plan user clicks the premium-indicated export button"
+    },
+    {
+      "then": "Export button appears normal without premium indicators or restrictions",
+      "when": "They view the export button",
+      "given": "A premium plan user accesses the export functionality"
+    }
+  ],
+  "success": [
+    {
+      "metric": "Export upgrade conversion rate",
+      "target": "Increase from 4.2% to 10%",
+      "timeframe": "within 8 weeks of implementation"
+    },
+    {
+      "metric": "Export-related support tickets",
+      "target": "Reduce 'unexpected paywall' complaints by 70%",
+      "timeframe": "within 4 weeks of implementation"
+    },
+    {
+      "metric": "CSAT score for premium upgrade flows",
+      "target": "Increase from 2.1/5 to 3.5/5",
+      "timeframe": "within 6 weeks of implementation"
+    }
+  ],
+  "decision": "Redesign export button to clearly indicate premium requirement with lock icon and tooltip, implementing upgrade prompt after work completion rather than blocking paywall",
+  "scope_in": [
+    "Lock icon overlay on export button for free plan users",
+    "Premium badge/label on export functionality",
+    "Contextual tooltip explaining premium requirement",
+    "Upgrade modal triggered after work completion but before export",
+    "Mobile-optimized visual indicators (no hover dependency)",
+    "Clear pricing and feature explanation in upgrade flow"
+  ],
+  "rationale": "Evidence shows the current export paywall creates user frustration (2.1/5 CSAT) and poor conversions (4.2% vs 12-18% benchmark) because it feels deceptive. Users are willing to pay when timing is right - after completing work but before export attempt. Visual indicators will reduce 'unexpected' complaints (34 tickets/90 days) while maintaining click-through for conversion optimization. This extends our meal logging MVP's monetization strategy with transparent premium feature presentation.",
+  "scope_out": [
+    "Changes to export functionality itself",
+    "New premium features beyond existing export",
+    "Pricing model modifications",
+    "Complete UI redesign beyond premium indicators",
+    "Multi-step upgrade sequences",
+    "Desktop vs mobile feature parity"
+  ],
+  "confidence": 0.9,
+  "edge_cases": [
+    {
+      "handling": "Show upgrade modal with clear pricing and feature benefits, not a blocking paywall",
+      "priority": "high",
+      "scenario": "Free user clicks export button despite premium indicators"
+    },
+    {
+      "handling": "Use persistent lock icon and premium badge visible without interaction",
+      "priority": "high",
+      "scenario": "Mobile user cannot access hover tooltip"
+    },
+    {
+      "handling": "Present upgrade prompt that acknowledges their work completion and emphasizes data export value",
+      "priority": "medium",
+      "scenario": "User completes extensive meal logging work before noticing export limitation"
+    },
+    {
+      "handling": "Show condensed upgrade reminder with direct link to pricing page",
+      "priority": "low",
+      "scenario": "User repeatedly clicks export after seeing upgrade modal"
+    }
+  ],
+  "agent_brief": "Modify the export button in the meal logging app to show premium status clearly. For free plan users: Add a lock icon overlay and 'Premium' badge to the export button. Create a tooltip component showing 'Export requires premium plan - upgrade to export your data' on hover (desktop) or tap (mobile). Style the button with reduced opacity or muted colors to indicate premium status while keeping it clickable. Ensure mobile users can see the lock icon without hover interactions. When free users click export, replace the current blocking paywall with an upgrade modal that highlights their completed meal logging work and explains export benefits with clear pricing. For premium users, show the normal export button without any restrictions or indicators. Use the existing Tailwind styling from the calorie tracking app for consistency. Implement user plan detection to conditionally render the appropriate export button state. Test both user flows thoroughly - free users should understand export is premium before investing time, premium users should have seamless export access.",
+  "evidence_refs": [
+    {
+      "quote": "I didn't realise the export was a paid feature. I just hit the button and got a paywall. Felt like a trap.",
+      "source": "User interviews",
+      "weight": 0.9
+    },
+    {
+      "quote": "34 tickets tagged 'export_blocked'. Most common complaint: unexpected.",
+      "source": "Support tickets",
+      "weight": 0.8
+    },
+    {
+      "quote": "Upgrade conversions from modal: 52 (4.2%)",
+      "source": "Analytics",
+      "weight": 0.9
+    },
+    {
+      "quote": "I would have paid if the upgrade had come at the right moment. The paywall felt aggressive.",
+      "source": "User interviews",
+      "weight": 0.8
+    },
+    {
+      "quote": "Industry benchmark for feature-gate conversion: 12-18%",
+      "source": "Analytics",
+      "weight": 0.7
+    }
+  ],
+  "quality_report": {
+    "score": 100,
+    "findings": []
+  },
+  "security_abuse": {
+    "risks": [
+      {
+        "concern": "Users might attempt to manipulate client-side premium indicators to access export without payment",
+        "category": "Authorization bypass",
+        "mitigation": "Implement server-side plan verification for all export requests, never rely solely on client-side premium status checks"
+      },
+      {
+        "concern": "Premium feature UI might inadvertently reveal system architecture or pricing strategy details",
+        "category": "Information disclosure",
+        "mitigation": "Keep tooltip and modal text generic, avoid exposing internal plan codes or pricing logic in client-side code"
+      }
+    ],
+    "summary": "Premium feature indicators present minimal security risks as they are UI enhancements to existing export functionality. Primary concerns are around plan verification and preventing premium feature bypass."
+  }
+}
