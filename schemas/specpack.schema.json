@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://figural.watch/schemas/specpack.v1.schema.json",
+  "title": "SpecPack v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specpack_version",
+    "decision",
+    "rationale",
+    "confidence",
+    "scope_in",
+    "scope_out",
+    "edge_cases",
+    "tests",
+    "success",
+    "agent_brief"
+  ],
+  "properties": {
+    "specpack_version": {
+      "description": "SpecPack schema version. Must be 1 for v1.",
+      "const": 1
+    },
+    "decision": {
+      "description": "Single core decision this SpecPack enforces.",
+      "type": "string",
+      "minLength": 1
+    },
+    "rationale": {
+      "description": "Why this decision is the right trade-off.",
+      "type": "string",
+      "minLength": 1
+    },
+    "confidence": {
+      "description": "Confidence in this specpack (0..1).",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "scope_in": {
+      "description": "Explicitly in-scope items.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "scope_out": {
+      "description": "Explicitly out-of-scope or forbidden items.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "edge_cases": {
+      "description": "Edge cases and handling guidance.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenario", "handling", "priority"],
+        "properties": {
+          "scenario": { "type": "string", "minLength": 1 },
+          "handling": { "type": "string", "minLength": 1 },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          }
+        }
+      }
+    },
+    "tests": {
+      "description": "Acceptance tests for the change.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["given", "when", "then"],
+        "properties": {
+          "given": { "type": "string", "minLength": 1 },
+          "when": { "type": "string", "minLength": 1 },
+          "then": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "success": {
+      "description": "Success metrics for the decision.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metric", "target", "timeframe"],
+        "properties": {
+          "metric": { "type": "string", "minLength": 1 },
+          "target": { "type": "string", "minLength": 1 },
+          "timeframe": {
+            "type": "string",
+            "enum": ["30d", "60d", "90d"]
+          }
+        }
+      }
+    },
+    "agent_brief": {
+      "description": "Brief for agents to follow this SpecPack correctly.",
+      "type": "string",
+      "minLength": 1
+    },
+    "security_abuse": {
+      "description": "Optional security and abuse considerations.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "risks"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["category", "concern", "mitigation"],
+            "properties": {
+              "category": { "type": "string", "minLength": 1 },
+              "concern": { "type": "string", "minLength": 1 },
+              "mitigation": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
