@@ -1,6 +1,6 @@
 {
   "name": "figural-watch",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Validate and watch SpecPack drift in git diffs (deterministic, CI-friendly).",
   "license": "MIT",
   "author": "ShauryaH24",
