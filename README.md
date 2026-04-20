@@ -52,7 +52,14 @@ Notes:
 
 Add a workflow file to your repo at **`.github/workflows/figural-watch.yml`**, then commit + push it.
 
-If your default branch is `main`, use:
+The recommended workflow (with **Check Summary + report artifact**) is in this repo at:
+- `examples/github-actions/figural-watch.yml`
+
+Copy that file into your repo at **`.github/workflows/figural-watch.yml`**.
+
+If your default branch is `main`, you can use it as-is. If your default branch is `master`, change `origin/main` → `origin/master`.
+
+Minimal scaffold (README-only) version:
 
 ```yaml
 name: figural-watch
@@ -71,8 +78,6 @@ jobs:
       - run: npx -y figural-watch validate
       - run: npx -y figural-watch report --base origin/main --head HEAD
 ```
-
-If your default branch is `master`, change `origin/main` → `origin/master`.
 
 ### Philosophy (why this exists)
 

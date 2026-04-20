@@ -1,0 +1,87 @@
+name: figural-watch
+
+on:
+  pull_request:
+
+jobs:
+  specpack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Validate specpack.json
+        run: npx -y figural-watch validate
+
+      - name: Run figural-watch report
+        id: figural_report
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          OUT_FILE="$(mktemp)"
+          set +e
+          npx -y figural-watch report --base origin/main --head HEAD | tee "$OUT_FILE"
+          EXIT_CODE="${PIPESTATUS[0]}"
+          set -e
+
+          CONFLICT_LINE="$(grep -Eo 'Conflicts: [0-9]+ fail, [0-9]+ warn' "$OUT_FILE" | tail -n 1 || true)"
+
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          echo "conflict_line=$CONFLICT_LINE" >> "$GITHUB_OUTPUT"
+
+      - name: Upload full report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: figural-watch-report
+          path: figural-watch-report.md
+          if-no-files-found: warn
+
+      - name: Write Check Summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          EXIT_CODE="${{ steps.figural_report.outputs.exit_code }}"
+          CONFLICT_LINE="${{ steps.figural_report.outputs.conflict_line }}"
+
+          if [[ "$EXIT_CODE" == "0" ]]; then
+            STATUS="PASS"
+          elif [[ "$EXIT_CODE" == "2" ]]; then
+            STATUS="FAIL (conflicts)"
+          else
+            STATUS="ERROR"
+          fi
+
+          {
+            echo "## figural-watch"
+            echo
+            echo "**Status**: $STATUS"
+            echo
+            if [[ -n "$CONFLICT_LINE" ]]; then
+              echo "**$CONFLICT_LINE**"
+              echo
+            fi
+            echo "Full report: download the **figural-watch-report** artifact from this workflow run."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail the job if report failed
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXIT_CODE="${{ steps.figural_report.outputs.exit_code }}"
+          if [[ -z "$EXIT_CODE" ]]; then
+            echo "figural-watch report did not run correctly."
+            exit 1
+          fi
+          exit "$EXIT_CODE"
+
