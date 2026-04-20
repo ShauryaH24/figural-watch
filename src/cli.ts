@@ -3,6 +3,8 @@ import { Command } from "commander";
 import { initCommand } from "./commands/init.js";
 import { validateCommand } from "./commands/validate.js";
 import { reportCommand } from "./commands/report.js";
+import { doctorCommand } from "./commands/doctor.js";
+import { explainCommand } from "./commands/explain.js";
 
 const program = new Command();
 
@@ -14,6 +16,8 @@ program
 program.addCommand(initCommand());
 program.addCommand(validateCommand());
 program.addCommand(reportCommand());
+program.addCommand(doctorCommand());
+program.addCommand(explainCommand());
 
 program.parse(process.argv);
 
