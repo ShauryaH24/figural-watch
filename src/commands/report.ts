@@ -112,22 +112,32 @@ function detectMultipleSystemsConflicts(
   if (baseOrm.length > 0 && systemsFromHeadAdds.orm.size > 0) {
     const added = [...systemsFromHeadAdds.orm].sort().join(", ");
     conflicts.push({
+      id: "multi.orm",
       level: "fail",
       title: "Multiple ORM systems detected",
       detail: `Base already contains ORM-related deps (${baseOrm.join(
         ", "
       )}) and this diff adds (${added}).`,
+      evidence: [
+        ...baseOrm.sort().map((d) => ({ kind: "base_dependency" as const, value: d })),
+        ...[...systemsFromHeadAdds.orm].sort().map((d) => ({ kind: "dependency" as const, value: d })),
+      ],
     });
   }
 
   if (baseAuth.length > 0 && systemsFromHeadAdds.auth.size > 0) {
     const added = [...systemsFromHeadAdds.auth].sort().join(", ");
     conflicts.push({
+      id: "multi.auth",
       level: "fail",
       title: "Multiple auth systems detected",
       detail: `Base already contains auth-related deps (${baseAuth.join(
         ", "
       )}) and this diff adds (${added}).`,
+      evidence: [
+        ...baseAuth.sort().map((d) => ({ kind: "base_dependency" as const, value: d })),
+        ...[...systemsFromHeadAdds.auth].sort().map((d) => ({ kind: "dependency" as const, value: d })),
+      ],
     });
   }
 
