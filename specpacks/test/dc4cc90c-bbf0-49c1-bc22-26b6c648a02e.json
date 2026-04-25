@@ -1,0 +1,156 @@
+{
+  "tests": [
+    {
+      "then": "Their top 3 most frequent breakfast items appear as one-tap options",
+      "when": "They open the meal logging interface",
+      "given": "A user who has logged 10+ meals returns to log breakfast"
+    },
+    {
+      "then": "Autocomplete suggestions appear within 500ms with their previous chicken selections ranked first",
+      "when": "The search executes",
+      "given": "A user types 'chick' in the food search"
+    },
+    {
+      "then": "They can choose portion size and cooking method to get calorie estimate in under 30 seconds",
+      "when": "They select quick estimation mode",
+      "given": "A user wants to log a homemade pasta dish"
+    },
+    {
+      "then": "All template items are logged with one tap and correct total calories calculated",
+      "when": "They select it from quick-add options",
+      "given": "A user has saved 'usual breakfast' meal template"
+    },
+    {
+      "then": "Only the highest quality entries appear in top 5 results based on data reliability score",
+      "when": "Search results display",
+      "given": "A user searches for a food with many duplicate entries"
+    }
+  ],
+  "success": [
+    {
+      "metric": "Average meal logging time",
+      "target": "Reduce from 2min 40sec to under 45 seconds",
+      "timeframe": "within 12 weeks"
+    },
+    {
+      "metric": "7-day retention rate",
+      "target": "Increase from 21% to 35% (industry benchmark)",
+      "timeframe": "within 16 weeks"
+    },
+    {
+      "metric": "Food search drop-off rate",
+      "target": "Reduce from 34% to under 15%",
+      "timeframe": "within 8 weeks"
+    },
+    {
+      "metric": "Daily meal logging completion",
+      "target": "Increase from 58% to 75% of active users log at least 1 meal/day",
+      "timeframe": "within 12 weeks"
+    }
+  ],
+  "decision": "Implement intelligent food logging with quick-add suggestions and streamlined search to reduce logging time and improve consistency",
+  "scope_in": [
+    "Recently logged meals quick-add interface with one-tap re-logging",
+    "Frequently eaten foods suggestions based on user history",
+    "Streamlined food search with autocomplete and smart ranking",
+    "Quick estimation mode for homemade meals with portion-based calorie estimates",
+    "Improved food database deduplication and quality scoring",
+    "Meal templates for common combinations (e.g. 'usual breakfast')",
+    "Search result prioritization based on user's previous selections"
+  ],
+  "rationale": "Evidence overwhelmingly shows food logging friction is the primary barrier to retention - 9/14 users cite time consumption, 2min 40sec average logging time vs user demand for '10x faster logging', and 34% drop-off during search. Current 21% seven-day retention significantly lags the 35-45% industry benchmark. This builds on our existing meal logging MVP and premium export features by addressing the core UX friction that prevents daily usage. Users explicitly want personalized suggestions based on eating patterns rather than searching every time.",
+  "scope_out": [
+    "Advanced recipe creation or detailed ingredient breakdown",
+    "Nutrition tracking beyond calories",
+    "Barcode scanning improvements (separate initiative)",
+    "Social features or meal sharing",
+    "Integration with external meal planning services",
+    "Complex macro nutrient tracking",
+    "Photo-based food recognition"
+  ],
+  "confidence": 0.9,
+  "edge_cases": [
+    {
+      "handling": "Show popular foods and common meal suggestions until 5+ meals logged",
+      "priority": "high",
+      "scenario": "User has no logging history for personalized suggestions"
+    },
+    {
+      "handling": "Offer quick manual entry with calorie estimation guidance and portion references",
+      "priority": "high",
+      "scenario": "User searches for food not in database or gets poor results"
+    },
+    {
+      "handling": "Provide portion-based estimation tool with common cooking methods and ingredients",
+      "priority": "medium",
+      "scenario": "User wants to log complex homemade meals quickly"
+    },
+    {
+      "handling": "Use smart ranking to show most reliable/popular entries first, hide low-quality duplicates",
+      "priority": "medium",
+      "scenario": "Multiple similar food entries confuse user during search"
+    }
+  ],
+  "agent_brief": "Enhance the existing meal logging app with intelligent quick-add features. Implement a 'Recent & Favorites' section at the top of the logging interface showing the user's last 5 meals and most frequently logged foods as one-tap options. Add autocomplete to the existing food search with smart ranking that prioritizes: 1) user's previous selections, 2) high-quality database entries, 3) popular foods. Create a meal templates feature where users can save common meal combinations (like 'usual breakfast') for one-tap logging. Build a quick estimation mode for homemade meals with portion selectors (small/medium/large) and common cooking methods that provide calorie ranges. Improve the food database by implementing a quality scoring system that hides duplicate or low-quality entries from search results. Store user meal history to power the personalization engine - track frequency, recency, and meal type associations. Update the existing meal logging flow to show quick-add options first, then search, making the fastest path most prominent. Ensure all new features integrate with the existing Supabase schema and calorie calculation logic while maintaining compatibility with the premium export functionality. Target sub-45 second logging time for repeat meals.",
+  "evidence_refs": [
+    {
+      "quote": "I'd use it daily if logging was 10x faster.",
+      "source": "User interviews",
+      "weight": 0.9
+    },
+    {
+      "quote": "I want suggestions based on what I usually eat, not search every time.",
+      "source": "User interviews",
+      "weight": 0.9
+    },
+    {
+      "quote": "Avg. time to log a meal: 2 min 40 sec",
+      "source": "Analytics",
+      "weight": 0.9
+    },
+    {
+      "quote": "Drop-off rate during food search: 34%",
+      "source": "Analytics",
+      "weight": 0.8
+    },
+    {
+      "quote": "Users who log consistently for 7+ days: 21%",
+      "source": "Analytics",
+      "weight": 0.8
+    },
+    {
+      "quote": "42 tickets tagged 'food_logging_friction'",
+      "source": "Support tickets",
+      "weight": 0.8
+    },
+    {
+      "quote": "There are too many duplicate food options, it's confusing.",
+      "source": "User interviews",
+      "weight": 0.7
+    },
+    {
+      "quote": "Smart auto-complete that learns user preferences",
+      "source": "Clarifications",
+      "weight": 0.8
+    }
+  ],
+  "quality_report": {
+    "score": 100,
+    "findings": []
+  },
+  "security_abuse": {
+    "risks": [
+      {
+        "concern": "User meal history and preferences stored for personalization could reveal dietary patterns or health information if accessed by unauthorized parties",
+        "category": "Information disclosure",
+        "mitigation": "Implement row-level security in Supabase to ensure users can only access their own meal history, encrypt sensitive dietary preference data, and audit access to user meal patterns"
+      },
+      {
+        "concern": "Users might attempt to manipulate quick-add suggestions or calorie estimates through repeated logging of incorrect values",
+        "category": "Data integrity",
+        "mitigation": "Validate all calorie calculations server-side against the authoritative food database, implement sanity checks for manual calorie entries (e.g. flag entries >5000 calories), and use weighted algorithms for suggestions that favor database accuracy over user frequency"
+      }
+    ],
+    "summary": "Food logging intelligence features present minimal security risks as they primarily involve UI improvements and user personalization data. Main concerns are around data privacy and preventing manipulation of calorie calculations."
+  }
+}
